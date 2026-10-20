@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Store - ລະບົບຂາຍສິນຄ້າ</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="header-stripe"></div>
+            <div class="header-content">
+                <h1 class="store-title">ຮ້ານ POS</h1>
+                <nav class="main-nav">
+                    <a href="index.html" class="nav-link">ໜ້າຫຼັກ</a>
+                    <a href="#" class="nav-link" onclick="showCart(); return false;">ກະຕ່າ <span id="cart-count">0</span></a>
+                    <a href="admin.html" class="nav-link">Admin</a>
+                </nav>
+            </div>
+            <div class="header-stripe"></div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Product Grid -->
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </main>
+
+        <!-- Cart Modal -->
+        <div class="modal" id="cart-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>ກະຕ່າສິນຄ້າ</h2>
+                    <button class="close-btn" onclick="closeCart()">&times;</button>
+                </div>
+                <div class="modal-body" id="cart-items">
+                    <!-- Cart items -->
+                </div>
+                <div class="modal-footer">
+                    <div class="cart-total">
+                        ລວມທັງໝົດ: <span id="cart-total">0</span> ກີບ
+                    </div>
+                    <button class="btn btn-red" onclick="checkout()">ຊຳລະເງິນ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Detail Modal -->
+        <div class="modal" id="product-modal">
+            <div class="modal-content product-detail">
+                <div class="modal-header">
+                    <h2 id="product-detail-name"></h2>
+                    <button class="close-btn" onclick="closeProductDetail()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="product-image-container">
+                        <img id="product-detail-image" src="" alt="Product">
+                    </div>
+                    <div class="product-info">
+                        <p class="product-price">ລາຄາ: <span id="product-detail-price"></span> ກີບ</p>
+                        <p class="product-stock">ສະຕັອກ: <span id="product-detail-stock"></span> ອັນ</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-blue" onclick="addToCartFromDetail()">ເພີ່ມໃສ່ກະຕ່າ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Modal -->
+        <div class="modal" id="checkout-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>ຂໍ້ມູນຈັດສົ່ງ</h2>
+                    <button class="close-btn" onclick="closeCheckout()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>ຊື່ລູກຄ້າ:</label>
+                        <input type="text" id="customer-name" class="form-input" placeholder="ປ້ອນຊື່">
+                    </div>
+                    <div class="form-group">
+                        <label>ເບີໂທລະສັບ:</label>
+                        <input type="tel" id="customer-phone" class="form-input" placeholder="020XXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>ທີ່ຢູ່ / ສະຖານທີ່:</label>
+                        <textarea id="customer-address" class="form-input" rows="3" placeholder="ປ້ອນທີ່ຢູ່"></textarea>
+                        <button class="btn btn-yellow" onclick="getLocation()">Get My Location</button>
+                    </div>
+                    <div class="form-group">
+                        <label>ແຜນທີ່:</label>
+                        <div id="map-container" class="map-container">
+                            <input type="text" id="map-search" class="form-input" placeholder="ຄົ້ນຫາສະຖານທີ່..." onkeyup="searchLocation()">
+                            <div id="map-view" class="map-view">
+                                <p class="map-placeholder">ກະລຸນາກົດ "Get My Location" ຫຼື ຄົ້ນຫາສະຖານທີ່</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ວິທີການຈ່າຍເງິນ:</label>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cod" checked>
+                                <span>ເງິນສົດ (COD)</span>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="qr">
+                                <span>Bank QR Code</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="qr-payment" id="qr-payment" style="display:none;">
+                        <div class="qr-code">
+                            <svg viewBox="0 0 100 100" class="qr-svg">
+                                <rect width="100" height="100" fill="white"/>
+                                <!-- QR Code pattern -->
+                                <rect x="10" y="10" width="25" height="25" fill="black"/>
+                                <rect x="65" y="10" width="25" height="25" fill="black"/>
+                                <rect x="10" y="65" width="25" height="25" fill="black"/>
+                                <rect x="15" y="15" width="15" height="15" fill="white"/>
+                                <rect x="70" y="15" width="15" height="15" fill="white"/>
+                                <rect x="15" y="70" width="15" height="15" fill="white"/>
+                                <rect x="17" y="17" width="11" height="11" fill="black"/>
+                                <rect x="72" y="17" width="11" height="11" fill="black"/>
+                                <rect x="17" y="72" width="11" height="11" fill="black"/>
+                                <!-- Data modules -->
+                                <rect x="40" y="10" width="5" height="5" fill="black"/>
+                                <rect x="50" y="15" width="5" height="5" fill="black"/>
+                                <rect x="40" y="25" width="5" height="5" fill="black"/>
+                                <rect x="55" y="35" width="5" height="5" fill="black"/>
+                                <rect x="10" y="40" width="5" height="5" fill="black"/>
+                                <rect x="20" y="50" width="5" height="5" fill="black"/>
+                                <rect x="35" y="45" width="5" height="5" fill="black"/>
+                                <rect x="45" y="55" width="5" height="5" fill="black"/>
+                                <rect x="60" y="45" width="5" height="5" fill="black"/>
+                                <rect x="70" y="55" width="5" height="5" fill="black"/>
+                                <rect x="85" y="40" width="5" height="5" fill="black"/>
+                                <rect x="40" y="65" width="5" height="5" fill="black"/>
+                                <rect x="55" y="70" width="5" height="5" fill="black"/>
+                                <rect x="70" y="80" width="5" height="5" fill="black"/>
+                                <rect x="85" y="75" width="5" height="5" fill="black"/>
+                                <rect x="40" y="85" width="5" height="5" fill="black"/>
+                                <rect x="50" y="80" width="5" height="5" fill="black"/>
+                                <rect x="60" y="85" width="5" height="5" fill="black"/>
+                                <rect x="80" y="85" width="5" height="5" fill="black"/>
+                            </svg>
+                        </div>
+                        <p>ສະແກນ QR Code ເພື່ອຈ່າຍເງິນ</p>
+                        <div class="form-group">
+                            <label>ອັບໂຫຼດສະລິບການໂອນເງິນ:</label>
+                            <input type="file" id="payment-slip" class="form-input" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-blue" onclick="submitOrder()">ຢືນຢັນການສັ່ງຊື້</button>
+                    <button class="btn btn-red" onclick="closeCheckout()">ຍົກເລີກ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Modal -->
+        <div class="modal" id="success-modal">
+            <div class="modal-content success-modal">
+                <div class="modal-body">
+                    <div class="success-icon">&#10004;</div>
+                    <h2>ການສັ່ງຊື້ສຳເລັດ!</h2>
+                    <p>ຂອບໃຈທ່ານທີ່ສັ່ງຊື້</p>
+                    <p class="order-number">ເລກທີ່ອໍເດີ້: <span id="order-id"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-blue" onclick="closeSuccess()">ຕົກລົງ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/store.js"></script>
+</body>
+</html>
