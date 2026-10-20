@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - POS System</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div class="login-container" id="login-screen">
+            <div class="login-box">
+                <h1 class="login-title">Admin Login</h1>
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="admin-username" class="form-input" placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>Password:</label>
+                    <input type="password" id="admin-password" class="form-input" placeholder="admin">
+                </div>
+                <button class="btn btn-blue" onclick="login()">Login</button>
+                <p class="login-hint">Default: admin / admin</p>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div class="admin-dashboard" id="admin-dashboard" style="display:none;">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-stripe"></div>
+                <div class="header-content">
+                    <h1 class="store-title">Admin Panel</h1>
+                    <nav class="main-nav">
+                        <a href="#" class="nav-link active" onclick="showSection('orders'); return false;">ອໍເດີ້</a>
+                        <a href="#" class="nav-link" onclick="showSection('products'); return false;">ສິນຄ້າ</a>
+                        <a href="index.html" class="nav-link">ໜ້າຮ້ານ</a>
+                        <a href="#" class="nav-link" onclick="logout(); return false;">Logout</a>
+                    </nav>
+                </div>
+                <div class="header-stripe"></div>
+            </header>
+
+            <!-- Orders Section -->
+            <div class="admin-section" id="orders-section">
+                <h2 class="section-title">ລາຍການອໍເດີ້</h2>
+                <div class="orders-list" id="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="admin-section" id="products-section" style="display:none;">
+                <h2 class="section-title">ຈັດການສິນຄ້າ</h2>
+                <button class="btn btn-yellow" onclick="showAddProduct()">+ ເພີ່ມສິນຄ້າ</button>
+                <div class="products-admin-list" id="products-admin-list">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Product Form Modal -->
+            <div class="modal" id="product-form-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="product-form-title">ເພີ່ມສິນຄ້າ</h2>
+                        <button class="close-btn" onclick="closeProductForm()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-product-id">
+                        <div class="form-group">
+                            <label>ຊື່ສິນຄ້າ:</label>
+                            <input type="text" id="product-name" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ລາຄາ:</label>
+                            <input type="number" id="product-price" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ສະຕັອກ:</label>
+                            <input type="number" id="product-stock" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>ຮູບພາບ:</label>
+                            <input type="file" id="product-image" class="form-input" accept="image/*">
+                            <div id="image-preview" class="image-preview"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-blue" onclick="saveProduct()">ບັນທຶກ</button>
+                        <button class="btn btn-red" onclick="closeProductForm()">ຍົກເລີກ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Detail Modal -->
+            <div class="modal" id="order-detail-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>ລາຍລະອຽດອໍເດີ້</h2>
+                        <button class="close-btn" onclick="closeOrderDetail()">&times;</button>
+                    </div>
+                    <div class="modal-body" id="order-detail-content">
+                        <!-- Order details -->
+                    </div>
+                    <div class="modal-footer">
+                        <div class="status-buttons">
+                            <button class="btn btn-yellow" onclick="updateOrderStatus('preparing')">ກຳລັງກຽມ</button>
+                            <button class="btn btn-blue" onclick="updateOrderStatus('shipping')">ກຳລັງສົ່ງ</button>
+                            <button class="btn btn-red" onclick="updateOrderStatus('delivered')">ຈັດສົ່ງສຳເລັດ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
